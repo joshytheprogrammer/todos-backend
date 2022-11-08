@@ -36,7 +36,7 @@ router.post("/login", async (req, res) => {
       return
     }
 
-    const accessToken = jwt.sign({
+    const token = jwt.sign({
       id: user._id,
       isAdmin: user.isAdmin
     }, 
@@ -46,7 +46,7 @@ router.post("/login", async (req, res) => {
 
     const { password, ...others } = user._doc;
 
-    res.status(200).json({...others, accessToken})
+    res.status(200).json({...others, token})
   } catch(err) {
     res.status(500).json(err)
   }
