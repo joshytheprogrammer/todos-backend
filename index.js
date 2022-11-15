@@ -14,9 +14,11 @@ mongoose.connect(process.env.MONGO_URL)
 })
 
 app.use(express.json())
+
 app.use(cors({
   origin: ['http://localhost:3000']
 }));
+
 app.use("/api/auth", authRoute)
 
 app.listen(process.env.PORT || 5000, () => {
