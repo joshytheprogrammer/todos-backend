@@ -38,15 +38,19 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({
       id: user._id,
-      isAdmin: user.isAdmin
     }, 
       process.env.JWT_SEC,
       {expiresIn: "3d"}
     )
 
-    const { password, ...others } = user._doc;
-
-    res.status(200).json({...others, token})
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    })
+  
+    res.send({
+      message: 'Authentication Success'
+    })
   } catch(err) {
     res.status(500).json(err)
   }
