@@ -3,6 +3,7 @@ const User = require("../models/User")
 const CryptoJs = require("crypto-js")
 const jwt = require("jsonwebtoken")
 
+
 router.post("/register", async (req, res) => {
   const newUser = new User({
     username: req.body.username,
@@ -32,8 +33,9 @@ router.post("/login", async (req, res) => {
     const OriginalPassword = hashedPassword.toString(CryptoJs.enc.Utf8)
 
     if( OriginalPassword !== req.body.password ) {
-      res.status(401).json("Wrong Credentials")
-      return
+      return res.status(401).send({
+        message: 'Invalid credentials'
+      })
     }
 
     const token = jwt.sign({
@@ -54,6 +56,39 @@ router.post("/login", async (req, res) => {
   } catch(err) {
     res.status(500).json(err)
   }
+})
+
+router.get('/user', async (req, res) => {
+  try {
+    const cookie = req.cookies['token']
+
+    const claims = jwt.verify(cookie, "secret") 
+
+    if(!claims) {
+      return res.status(401).send({
+        message: 'Invalid credentials'
+      })
+    }
+
+    const user = await User.findOne({_id: claims._id})
+
+    const {password, ...data} = await user.toJSON()
+
+    res.send(data)
+  }catch(e) {
+    return res.status(401).send({
+      message: 'Invalid credentials'
+    })
+  }
+  
+})
+
+router.post('/logout', (req, res) => {
+   res.cookie('jwt', '', {maxAge: 0})
+
+   res.send({
+    message: 'Logout success'
+   })
 })
 
 module.exports = router
