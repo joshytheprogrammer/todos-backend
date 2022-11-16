@@ -38,7 +38,13 @@ router.post("/login", async (req, res) => {
       })
     }
 
-    const token = jwt.sign({id: user._id, }, process.env.JWT_SEC)
+    const token = jwt.sign(
+      {id: user._id, },
+      process.env.JWT_SEC,
+      {
+        expiresIn: 24 * 60 * 60 * 3
+      }
+    )
   
     res.send({
       token: token,
@@ -79,11 +85,7 @@ router.get('/user', async (req, res) => {
 })
 
 router.post('/logout', (req, res) => {
-   res.cookie('token', '', {maxAge: 0})
-
-   res.send({
-    message: 'Logout success'
-   })
+   
 })
 
 module.exports = router
