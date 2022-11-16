@@ -38,19 +38,10 @@ router.post("/login", async (req, res) => {
       })
     }
 
-    const token = jwt.sign({
-      id: user._id,
-    }, 
-      process.env.JWT_SEC,
-      {expiresIn: "3d"}
-    )
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
-    })
+    const token = jwt.sign({id: user._id, }, process.env.JWT_SEC)
   
     res.send({
+      token: token,
       message: 'Authentication Success'
     })
   } catch(err) {
@@ -60,9 +51,9 @@ router.post("/login", async (req, res) => {
 
 router.get('/user', async (req, res) => {
   try {
-    const cookie = req.cookies['token']
+    const token = req.headers.authorization
 
-    const claims = jwt.verify(cookie, "secret") 
+    const claims = jwt.verify(token, process.env.JWT_SEC) 
 
     if(!claims) {
       return res.status(401).send({
@@ -70,21 +61,25 @@ router.get('/user', async (req, res) => {
       })
     }
 
-    const user = await User.findOne({_id: claims._id})
+    const user = await User.findOne({_id: claims.id})
 
-    const {password, ...data} = await user.toJSON()
+    let {password, createdAt, updatedAt, ...data} = await user.toJSON()
+
+    data = {
+      user: data
+    }
 
     res.send(data)
   }catch(e) {
     return res.status(401).send({
-      message: 'Invalid credentials'
+      message: 'Invalid credentials '+e
     })
   }
   
 })
 
 router.post('/logout', (req, res) => {
-   res.cookie('jwt', '', {maxAge: 0})
+   res.cookie('token', '', {maxAge: 0})
 
    res.send({
     message: 'Logout success'
