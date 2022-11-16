@@ -72,7 +72,7 @@ router.get('/user', async (req, res) => {
     res.send(data)
   }catch(e) {
     return res.status(401).send({
-      message: 'Invalid credentials '+e
+      message: 'Caught error: ' + e
     })
   }
   
