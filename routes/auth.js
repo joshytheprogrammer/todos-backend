@@ -1,14 +1,19 @@
 const router = require('express').Router()
 const User = require("../models/User")
 const CryptoJs = require("crypto-js")
+const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-
+const saltRounds = 10
 
 router.post("/register", async (req, res) => {
+
+  const hashedPassword = await bcrypt.hashSync(req.body.password, saltRounds)
+
   const newUser = new User({
     username: req.body.username,
     email: req.body.email,
-    password: CryptoJs.AES.encrypt(req.body.password, process.env.PASS_SEC).toString()
+    // password: CryptoJs.AES.encrypt(req.body.password, process.env.PASS_SEC).toString()
+    password: hashedPassword
   })
 
   try {
@@ -29,14 +34,18 @@ router.post("/login", async (req, res) => {
       return
     }
 
-    const hashedPassword = CryptoJs.AES.decrypt(user.password, process.env.PASS_SEC)
-    const OriginalPassword = hashedPassword.toString(CryptoJs.enc.Utf8)
+    passwordMatch = await bcrypt.compareSync(req.body.password, user.password)
 
-    if( OriginalPassword !== req.body.password ) {
+
+    // console.log(passwordMatch)
+
+    if( !passwordMatch ) {
       return res.status(401).send({
         message: 'Invalid credentials'
       })
     }
+
+    // console.log(user._id.toJSON())
 
     const token = jwt.sign(
       {id: user._id, },
@@ -45,6 +54,8 @@ router.post("/login", async (req, res) => {
         expiresIn: 24 * 60 * 60 * 3
       }
     )
+
+    console.log(token)
   
     res.send({
       token: token,
