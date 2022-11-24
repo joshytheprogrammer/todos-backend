@@ -36,16 +36,11 @@ router.post("/login", async (req, res) => {
 
     passwordMatch = await bcrypt.compareSync(req.body.password, user.password)
 
-
-    // console.log(passwordMatch)
-
     if( !passwordMatch ) {
       return res.status(401).send({
         message: 'Invalid credentials'
       })
     }
-
-    // console.log(user._id.toJSON())
 
     const token = jwt.sign(
       {id: user._id, },
@@ -54,8 +49,6 @@ router.post("/login", async (req, res) => {
         expiresIn: 24 * 60 * 60 * 3
       }
     )
-
-    console.log(token)
   
     res.send({
       token: token,
