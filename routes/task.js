@@ -1,15 +1,22 @@
+const Task = require('../models/Task')
+
 const router = require('express').Router()
 
 router.post("/create", async (req, res) => {
-  console.log(req.body.task)
+  let deadline = new Date(req.body.task.date).valueOf()
 
-  let d = new Date(req.body.task.date).valueOf()
+  const newTask = new Task({
+    title: req.body.task.title,
+    desc: req.body.task.desc,
+    deadline: deadline
+  })
 
-  console.log(d)
-
-  console.log(new Date(d).toString())
-
-  res.status(200).send("request succeeded")
+  try {
+    await newTask.save()
+    res.status(200).send("Task created successfully")
+  } catch (err) {
+    res.status(500).json(err);
+  }
 })
 
 module.exports = router
