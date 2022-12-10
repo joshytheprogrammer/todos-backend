@@ -1,6 +1,9 @@
+const router = require('express').Router()
 const Task = require('../models/Task')
 
-const router = require('express').Router()
+router.get("/", async (req, res) => {
+  console.log(req.query)
+})
 
 router.post("/create", async (req, res) => {
   let deadline = new Date(req.body.task.date).valueOf()
