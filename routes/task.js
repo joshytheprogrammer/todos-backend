@@ -2,7 +2,11 @@ const router = require('express').Router()
 const Task = require('../models/Task')
 
 router.get("/", async (req, res) => {
-  console.log(req.query)
+  let user_id = req.query.user_id
+  
+  const tasks = await Task.find({user_id: user_id})
+
+  res.status(200).send(tasks)
 })
 
 router.post("/create", async (req, res) => {
