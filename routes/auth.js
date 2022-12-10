@@ -1,6 +1,5 @@
 const router = require('express').Router()
 const User = require("../models/User")
-const CryptoJs = require("crypto-js")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const saltRounds = 10
@@ -79,7 +78,7 @@ router.get('/user', async (req, res) => {
     }
 
     res.send(data)
-    
+
   }catch(e) {
     return res.status(401).send({
       message: 'Caught error: ' + e
