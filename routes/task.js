@@ -6,6 +6,7 @@ router.post("/create", async (req, res) => {
   let deadline = new Date(req.body.task.date).valueOf()
 
   const newTask = new Task({
+    user_id: req.body.user_id,
     title: req.body.task.title,
     desc: req.body.task.desc,
     deadline: deadline
