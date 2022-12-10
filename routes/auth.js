@@ -71,7 +71,7 @@ router.get('/user', async (req, res) => {
 
     const user = await User.findOne({_id: claims.id})
 
-    let {password, createdAt, updatedAt, ...data} = await user.toJSON()
+    let {email, password, createdAt, updatedAt, ...data} = await user.toJSON()
 
     data = {
       user: data
