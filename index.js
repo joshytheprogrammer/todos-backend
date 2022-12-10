@@ -4,6 +4,7 @@ const dotenv = require("dotenv")
 const cors = require('cors');
 const cookieParser = require('cookie-parser')
 const authRoute = require("./routes/auth")
+const taskRoute = require("./routes/task")
 
 dotenv.config()
 const app = express()
@@ -24,6 +25,7 @@ app.use(cors({
 }));
 
 app.use("/api/auth", authRoute)
+app.use("/api/task", taskRoute)
 
 app.listen(process.env.PORT || 5000, () => {
   console.log("Backend Server is running @ http://localhost:"+process.env.PORT)
