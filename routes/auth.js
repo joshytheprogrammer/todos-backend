@@ -12,7 +12,6 @@ router.post("/register", async (req, res) => {
   const newUser = new User({
     username: req.body.username,
     email: req.body.email,
-    // password: CryptoJs.AES.encrypt(req.body.password, process.env.PASS_SEC).toString()
     password: hashedPassword
   })
 
@@ -80,6 +79,7 @@ router.get('/user', async (req, res) => {
     }
 
     res.send(data)
+    
   }catch(e) {
     return res.status(401).send({
       message: 'Caught error: ' + e
